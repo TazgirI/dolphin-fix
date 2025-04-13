@@ -51,6 +51,12 @@ public class DolphinFix
     public static boolean isPlayerNearby(Level level, Entity entity)
     {
         MinecraftServer server = level.getServer();
+
+        if (server.getPlayerCount() == 0)
+        {
+            return false;
+        }
+
         int simulationDistance = server.getPlayerList().getSimulationDistance();
 
         //The -15 is just to be safe and shouldn't affect gameplay
