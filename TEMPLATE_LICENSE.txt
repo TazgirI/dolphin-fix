@@ -13,6 +13,7 @@ THE SOFTWARE.
 
 Project template and any remaining files from said template were licensed as follows:
 
+
 MIT License
 
 Copyright (c) 2023 NeoForged project
