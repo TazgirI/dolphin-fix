@@ -22,16 +22,10 @@ public class DolphinFix
 
     public static final String MODID = "dolphin_fix";
 
-
-
-
     public DolphinFix(IEventBus modEventBus, ModContainer modContainer)
     {
         NeoForge.EVENT_BUS.register(this);
     }
-
-
-
 
     @SubscribeEvent
     public void onLivingHurt(LivingIncomingDamageEvent event)
@@ -52,25 +46,25 @@ public class DolphinFix
     {
         MinecraftServer server = level.getServer();
 
+        //I don't know what happens if we run the check and level.players is empty so this prevents any unexpected behaviour
+        //Also uses slightly less resources on the spawn chunks when the servers empty I suppose
         if (server.getPlayerCount() == 0)
         {
             return false;
         }
 
-        int simulationDistance = server.getPlayerList().getSimulationDistance();
+        //The -16 is just to be safe and shouldn't affect gameplay
+        int simulationDistance = server.getPlayerList().getSimulationDistance() - 16;
 
-        //The -15 is just to be safe and shouldn't affect gameplay
-        double rangeSqr = simulationDistance * simulationDistance * 15 - 15;
+        double distanceSqr = simulationDistance * simulationDistance * 16;
 
 
         for (Player player : level.players())
         {
-            if (player.distanceToSqr(entity) <= rangeSqr)
+            if (player.distanceToSqr(entity) <= distanceSqr)
             {
-                System.out.println(player.distanceToSqr(entity));
                 return true;
             }
-            System.out.println(player.distanceToSqr(entity));
         }
 
         return false;
