@@ -46,18 +46,17 @@ public class DolphinFix
     {
         MinecraftServer server = level.getServer();
 
-        //I don't know what happens if we run the check and level.players is empty so this prevents any unexpected behaviour
-        //Also uses slightly less resources on the spawn chunks when the servers empty I suppose
         if (server.getPlayerCount() == 0)
         {
             return false;
         }
 
-        //The -16 is just to be safe and shouldn't affect gameplay
+        //The -16 is just to be safe and shouldn't affect gameplay unless you are trying to drown dolphins
         int simulationDistance = server.getPlayerList().getSimulationDistance() - 16;
 
         double distanceSqr = simulationDistance * simulationDistance * 16;
 
+        //double distanceSqr = 1;
 
         for (Player player : level.players())
         {
