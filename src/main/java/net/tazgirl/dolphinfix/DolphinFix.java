@@ -1,9 +1,10 @@
 package net.tazgirl.dolphinfix;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.animal.Dolphin;
+import net.minecraft.world.entity.animal.dolphin.Dolphin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.ICancellableEvent;
@@ -30,19 +31,17 @@ public class DolphinFix
     @SubscribeEvent
     public void onLivingHurt(LivingIncomingDamageEvent event)
     {
-        if (event.getEntity() instanceof Dolphin && event.getSource().is(DamageTypes.DROWN))
+        if (!event.getEntity().level().isClientSide() && event.getEntity() instanceof Dolphin && event.getSource().is(DamageTypes.DROWN))
         {
-            if (!isPlayerNearby(event.getEntity().level(), event.getEntity()))
+            if (!isPlayerNearby((ServerLevel) event.getEntity().level(), event.getEntity()))
             {
-                if (event instanceof ICancellableEvent cancellableEvent)
-                {
-                    cancellableEvent.setCanceled(true);
-                }
+                event.setCanceled(true);
+                event.getEntity().setAirSupply(Config.safetyAir);
             }
         }
     }
 
-    public static boolean isPlayerNearby(Level level, Entity entity)
+    public static boolean isPlayerNearby(ServerLevel level, Entity entity)
     {
         MinecraftServer server = level.getServer();
 
@@ -52,11 +51,9 @@ public class DolphinFix
         }
 
         //The -16 is just to be safe and shouldn't affect gameplay unless you are trying to drown dolphins
-        int simulationDistance = server.getPlayerList().getSimulationDistance() - 16;
+        int simulationDistance = server.getPlayerList().getSimulationDistance() - Config.safetyMargin;
 
         double distanceSqr = simulationDistance * simulationDistance * 16;
-
-        //double distanceSqr = 1;
 
         for (Player player : level.players())
         {
