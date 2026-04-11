@@ -1,7 +1,3 @@
 What it do:
 ============
-Prevents dolphins from drowning when out of simulation distance.
-
-Potential Issues:
-================
-May cause unintended/looping behaviour when used in conjuction with mods that use the LivingIncomingDamage event.
+Prevents dolphins from drowning (vers 1.2.0+: dryout as well) when out of simulation distance.
