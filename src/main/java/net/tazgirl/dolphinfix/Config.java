@@ -1,24 +1,23 @@
 package net.tazgirl.dolphinfix;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 // An example config class. This is not required, but it's a good idea to have one to keep your config organized.
 // Demonstrates how to use Neo's config APIs
 public class Config
 {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
+
+    public static final ModConfigSpec.BooleanValue DROWNING_FIX = BUILDER
+            .comment("Prevent dolphins from drowning while they are unable to surface")
+            .define("drowningFix", true);
+
+    public static final ModConfigSpec.BooleanValue DRYOUT_FIX = BUILDER
+            .comment("Prevent dolphins from drying out while they are unable to move to water or are stuck in midair")
+            .define("dryoutFix", true);
+
 
     public static final ModConfigSpec.IntValue SAFETY_MARGIN = BUILDER
             .comment("Safety margin subtracted from the simulation distance to err on the more lenient side (i.e dolphins who enter range while already underwater and out of breath who need time to get to the surface). Default value will not effect gameplay unless you are trying to drown dolphins.")
@@ -30,6 +29,9 @@ public class Config
 
 
     static final ModConfigSpec SPEC = BUILDER.build();
+
+    static boolean drowningFix;
+    static boolean dryoutFix;
 
     static int safetyMargin;
     static int safetyAir;
@@ -48,6 +50,9 @@ public class Config
 
     static void load()
     {
+        drowningFix = DROWNING_FIX.get();
+        dryoutFix = DRYOUT_FIX.get();
+
         safetyMargin = SAFETY_MARGIN.get();
         safetyAir = SAFETY_AIR.get();
     }
